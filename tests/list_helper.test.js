@@ -1,4 +1,22 @@
 const listHelper = require('../utils/list_helper')
+const mongoose = require('mongoose')
+const supertest = require('supertest')
+const app = require('../app')
+const helper = require('./tests_helper')
+
+const api = supertest(app)
+
+const Blog = require('../models/blog')
+
+beforeEach(async () => {
+    await Blog.deleteMany({})
+
+    for (let blog of helper.initialBlogs) {
+        let blogObject = new Blog(blog)
+        await blogObject.save()
+    }
+
+})
 
 describe('dummy', () => {
     test('dummy returns one', () => {
@@ -114,3 +132,9 @@ describe('favorite blog', () => {
     })
 })
 
+describe('api', () => {
+    test('works with get request', async () => {
+        const response = await api.get('/api/blogs')
+        expect(response.body).toHaveLength(helper.initialBlogs.length)
+    })
+})
