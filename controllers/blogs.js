@@ -2,15 +2,11 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const logger = require('../utils/logger')
 
-blogsRouter.get('/', (request, response) => {
-  Blog
+blogsRouter.get('/', async (request, response) => {
+  const blogs = await Blog
     .find({})
-    .then(blogs => {
-      response.json(blogs)
-    })
-    .catch((error) => {
-      logger.error('error connecting to API: ', error.message)
-    })
+    .populate('user', {username: 1, name: 1})
+  response.json(blogs)
 })
 
 blogsRouter.post('/', (request, response) => {
@@ -21,7 +17,7 @@ blogsRouter.post('/', (request, response) => {
   }
 
   if (blog.title === undefined || blog.url === undefined) {
-    response.status(400).json({error: 'content missing'}).end()
+    return response.status(400).json({error: 'content missing'})
   }
 
 

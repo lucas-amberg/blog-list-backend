@@ -8,6 +8,8 @@ const api = supertest(app)
 
 const Blog = require('../models/blog')
 
+const User = require('../models/user')
+
 beforeEach(async () => {
     await Blog.deleteMany({})
 
@@ -233,6 +235,61 @@ describe('api', () => {
     })
 })
 
-afterAll(async () => {
-    await mongoose.connection.close()
+describe('users', () => {
+    beforeEach(async () => {
+        await User.deleteMany({})
+    
+        for (let user of helper.initialUsers) {
+            let userObject = new User(user)
+            await userObject.save()
+        }
+    
+    })
+    
+    test('will not get posted if their username is < 3 characters', async () => {
+
+        
+        const usersAtStart = await helper.usersInDb()
+
+        const userToAdd = {
+            username: 'ro',
+            password: 'Roshambo',
+            name: 'testAccount'
+        }
+
+        await api
+            .post('/api/users')
+            .send(userToAdd)
+            .expect(400)
+        
+        const usersAtEnd = await helper.usersInDb()
+
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    }) 
+
+    test('will not get posted if their password is < 3 characters', async () => {
+
+        const usersAtStart = await helper.usersInDb()
+
+        const userToAdd = {
+            username: 'root',
+            password: 'Ro',
+            name: 'testAccount'
+        }
+
+        await api
+            .post('/api/users')
+            .send(userToAdd)
+            .expect(400)
+        
+        const usersAtEnd = await helper.usersInDb()
+
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+        
+    })
+
 })
+
+// afterAll(async () => {
+//     await mongoose.connection.close()
+// })
