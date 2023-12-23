@@ -213,6 +213,24 @@ describe('api', () => {
         const blogsAtEnd = await helper.blogsInDb()
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
     })
+
+    test('updates single blog post with put request', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blogIdToUpdate = blogsAtStart[0].id
+        const newBlog = {
+            title: 'Blog post 1',
+            author: 'Lucas Amberg',
+            url: 'https://www.github.com/lucas-amberg',
+            likes: 2222222
+        }
+        await api
+            .put(`/api/blogs/${blogIdToUpdate}`)
+            .send(newBlog)
+            .expect(200)
+        
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd[0].likes).toEqual(2222222)
+    })
 })
 
 afterAll(async () => {
