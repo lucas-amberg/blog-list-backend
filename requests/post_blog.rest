@@ -2,7 +2,7 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "Blog Post 2",
+  "title": "Blog Post 10000",
   "author": "Lucas Amberg",
   "url": "https://github.com/lucas-amberg",
   "likes": 233
