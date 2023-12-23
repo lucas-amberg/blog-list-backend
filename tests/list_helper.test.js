@@ -201,4 +201,20 @@ describe('api', () => {
         const blogsAtEnd = await helper.blogsInDb()
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
     })
+
+    test('deletes single blog post successfully', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blogIdToDelete = blogsAtStart[0].id
+
+        await api
+            .delete(`/api/blogs/${blogIdToDelete}`)
+            .expect(204)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+    })
+})
+
+afterAll(async () => {
+    await mongoose.connection.close()
 })
