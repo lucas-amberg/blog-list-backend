@@ -142,4 +142,28 @@ describe('api', () => {
         const response = await api.get('/api/blogs')
         expect(response.body[0].id).toBeDefined()
     })
+
+    test('works with post request', async () => {
+        const newBlogPost = {
+            title: 'New blog post',
+            url: 'https://www.linkedin.com/in/lucasamberg',
+            author: 'Michael Milton',
+            likes: 12
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlogPost)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+        
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+        const titles = blogsAtEnd.map(blog => blog.title)
+
+        expect(titles).toContain(
+            'New blog post'
+        )
+
+    })
 })
