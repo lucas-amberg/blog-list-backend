@@ -20,6 +20,11 @@ blogsRouter.post('/', (request, response) => {
     blog.likes = 0
   }
 
+  if (blog.title === undefined || blog.url === undefined) {
+    response.status(400).json({error: 'content missing'}).end()
+  }
+
+
   blog
     .save()
     .then(result => {

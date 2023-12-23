@@ -186,4 +186,19 @@ describe('api', () => {
 
         expect(likes[likes.length-1]).toBe(0)
     })
+
+    test('responds with 400 Bad Request if url or title are missing', async () => {
+        const newBlogPost = {
+            likes: 20,
+            author: 'Aaron Aquino'
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlogPost)
+            .expect(400)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    })
 })
