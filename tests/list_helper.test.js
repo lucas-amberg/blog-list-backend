@@ -166,4 +166,24 @@ describe('api', () => {
         )
 
     })
+
+    test('sets likes to 0 when likes property is missing', async () => {
+        const newBlogPost = {
+            title: 'New blog post',
+            url: 'https://www.linkedin.com/in/lucasamberg',
+            author: 'Lucas Amberg'
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlogPost)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+        const likes = blogsAtEnd.map(blog => blog.likes)
+
+        expect(likes[likes.length-1]).toBe(0)
+    })
 })
